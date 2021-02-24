@@ -4,7 +4,9 @@ from flask_sqlalchemy import SQLAlchemy
 import json
 
 database_name = "trivia"
-database_path = "postgres://{}/{}".format('localhost:5432', database_name)
+user = "postgres"
+password = "1111"
+database_path = "postgres://{}:{}@{}/{}".format(user,password,'localhost:5432', database_name)
 
 db = SQLAlchemy()
 
@@ -18,7 +20,8 @@ def setup_db(app, database_path=database_path):
     db.app = app
     db.init_app(app)
     db.create_all()
-
+# def dbApp:
+#   return db
 '''
 Question
 
