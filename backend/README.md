@@ -87,6 +87,78 @@ GET '/categories'
 '5' : "Entertainment",
 '6' : "Sports"}
 
+GET '/questions/<int:page>'
+- Fetches a dictionary of categories, list of questions, total number of questions
+- Request Arguments: Page Number (integer)
+- Returns: An object with 6 keys,success, status code, questions, categories, totalQuestions,current_category
+{
+categories: {
+1: "Science",
+2: "Art",
+3: "Geography",
+4: "History",
+5: "Entertainment",
+6: "Sports"
+},
+current_category: null,
+questions: [
+{
+answer: "Maya Angelou",
+category: 4,
+difficulty: 2,
+id: 5,
+question: "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+}
+],
+status code: 200,
+success: true,
+totalQuestions: 20
+}
+
+DELETE '/questions/<int:id>'
+-deletes a question with a specified question id
+-Request Arguments: Question Id (integer)
+-Returns: Success status code with the deleted question or returns 404 if question is not found (incase of invalid id) 
+{
+    'success' : True,
+    'status code' : 200,
+    'questions: {
+    answer: "Maya Angelou",
+    category: 4,
+    difficulty: 2,
+    id: 5,
+    question: "Whose autobiography is entitled 'I Know Why the Caged Bird Sings'?"
+    }
+}
+
+POST '/questions'
+-creates a new question and persists it in the database
+-Request Arguments: json body containing the new question object
+-Returns: Success status code 201,or 422 in case of error
+
+GET 'questions/search?searchTerm=example
+-searches for a question using query parameter (searchTerm) and returns all the questiosn that matches (case insensitive)
+-Request Arguments: searchTerm (string) as a query parameter
+-Returns: success status code and a List of Questions that matches the search criteria
+
+GET 'categories/<int:id>/questions
+get questions based on category
+Request Arguments: category id (int)
+Returns: success status code with all the questions that belongs to this category
+or 404 in case the category with this id was not found
+
+POST /quizzes
+-gets questions to play the quiz, the end point takes category and previous question
+parameters and returns a random question within the given category, and that question also has not been repeated
+and also the questiion
+-Request Arguments: previous_questions and quiz category
+example of arguments: 
+"previous_questions": [9,12,5,23],
+"quiz_category": {
+"type": "Art",
+"id": "4"
+} 
+-Returns: status code success and a random question from a list of questions that matches this category and also not been anwered before (using previous_questions list of questions ids)
 ```
 
 
