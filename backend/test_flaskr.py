@@ -38,14 +38,73 @@ class TriviaTestCase(unittest.TestCase):
     def test_getQuestions(self):
         res = self.client().get('/questions/1')
         self.assertEqual(res.status_code, 200)
+    def test_getQuestions_invalid_page_fail(self):
+        #use an invalid id
+        res = self.client().get('/questions/9999')
+        self.assertEqual(res.status_code, 404)
     def test_deleteQuestion(self):
-        res = self.client().delete('/questions/5')
+        randomQ = self.client().get('/questions/1')        
+        id=randomQ.get_json()['questions'][0]['id']
+        res = self.client().delete(f'/questions/{id}')
         self.assertEqual(res.status_code, 200)
+    def test_deleteQuestion_invalid_id_fail(self):
+        res = self.client().delete('/questions/9999')
+        self.assertEqual(res.status_code, 404)
+    def test_post_questions(self):
+        res = self.client().post('/questions', json={
+            'question': 'is this a question',
+            'answer': 'yes it is',
+            'difficulty': 5,
+            'category': 4
+            })
+        self.assertEqual(res.status_code, 201)
+        self.assertEqual(res.get_json()['success'], True)
+        self.assertIs(type(res.get_json()['questions']["id"]),int)
+    def test_search_question(self):
+        res = self.client().get('/questions/search?searchTerm=only team to play in every soccer')
+        result = res.get_json()['questions'][0]
+        self.assertEqual(result['question'],'Which is the only team to play in every soccer World Cup tournament?')
     def test_questions_pagination(self):
         res = self.client().get('/questions/1')
         data = json.loads(res.data)
         self.assertEqual(res.status_code, 200)
         self.assertEqual(data['success'], True)
+    def test_post_questions_fail(self):
+        res = self.client().post('/questions', json={
+            'question': 'is this a question',
+            'answer': 'yes it is',
+            'difficulty': 5
+            })
+        self.assertEqual(res.status_code, 422)
+        self.assertEqual(res.get_json()['success'], False)
+    def test_get_category_questions(self):
+        res = self.client().get('/categories/1/questions')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 200)
+    def test_get_category_questions_fail(self):
+        res = self.client().get('/categories/999/questions')
+        data = json.loads(res.data)
+        self.assertEqual(res.status_code, 404)
+    def test_quizz(self):
+        payload = {
+            "previous_questions": [9,12,5],
+            "quiz_category": {
+            "type": "Art",
+            "id": "4"
+            } 
+            }
+        res = self.client().post('/quizzes',json = payload)
+        self.assertEqual(res.status_code, 200)
+    def test_quizz_fail(self):
+        payload = {
+            "previous_questions": [9,5,12,23],
+            "quiz_category": {
+            "type": "Art",
+            "id": "55"
+            } 
+            }
+        res = self.client().post('/quizzes',json = payload)
+        self.assertEqual(res.status_code, 404)
 # Make the tests conveniently executable
 if __name__ == "__main__":
     unittest.main()
